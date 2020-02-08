@@ -88,3 +88,4 @@ class Client(UserClient):
                 self.decree = self.disaster_to_decree[DisasterType.earthquake]
         actions.set_decree(self.decree)
 
+
