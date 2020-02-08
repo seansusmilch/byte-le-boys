@@ -35,15 +35,21 @@ class Client(UserClient):
         # sens_level =
         lasting_disasters = []
         for disaster in disasters:
-            if(disaster.type in self.lasting_disasters):
+            if disaster.type in self.lasting_disasters:
                 lasting_disasters.append(disaster)
 
-        lasting_disasters.sort(key=disasters.remaining_effort)
+            self.previous_disaster = disaster
+        try:
+            lasting_disasters.sort(key=lambda x: lasting_disasters[0].effort_remaining)
+        except IndexError:
+            pass
 
-        out = "effort = " + avail_effort \
-            + "\ngold = " + gold \
-            + "\nsens_type = " + "sens_type" \
-            + "\nsens_level = " + "sens_level" \
-            + "\ndisasters = " + ({i.type} for i in disasters)
+        for i in range(len(lasting_disasters)):
+                actions.add_effort(lasting_disasters[i], lasting_disasters[i].effort_remaining)
 
-        print(out)
+        if city.structure < city.max_structure - 20:
+            actions.add_effort(ActionType.repair_structure, (city.max_structure - city.structure) * 2)
+            # add effort to repair city if structure below 50
+
+        if city.population < city.structure:
+            actions.add_effort(ActionType.regain_population, (city.structure - city.population) * 2)
