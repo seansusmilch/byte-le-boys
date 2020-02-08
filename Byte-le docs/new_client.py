@@ -17,3 +17,6 @@ Class Client(UserClient):
         return CityType.popular
 
     def take_turn(self, turn, actions, city, disasters):
+
+        for disaster in disasters:
+            if disaster.type in lasting_disasters:
