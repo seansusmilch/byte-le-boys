@@ -30,9 +30,7 @@ class Client(UserClient):
 
     def take_turn(self, turn, actions, city, disasters):
         avail_effort = city.population
-        
-        # sens_type = 
-        # sens_level =
+
         lasting_disasters = []
         for disaster in disasters:
             if disaster.type in self.lasting_disasters:
@@ -46,6 +44,10 @@ class Client(UserClient):
 
         for i in range(len(lasting_disasters)):
                 actions.add_effort(lasting_disasters[i], lasting_disasters[i].effort_remaining)
+        try:
+            lasting_disasters.sort(key=lambda x: lasting_disasters[0].effort_remaining)
+        except IndexError:
+            pass
 
         if city.structure < city.max_structure - 20:
             actions.add_effort(ActionType.repair_structure, (city.max_structure - city.structure) * 2)
@@ -53,3 +55,13 @@ class Client(UserClient):
 
         if city.population < city.structure:
             actions.add_effort(ActionType.regain_population, (city.structure - city.population) * 2)
+
+        print(
+            "blizz " + str(city.sensors[SensorType.blizzard].sensor_results) \
+            +"\nearth " + str(city.sensors[SensorType.earthquake].sensor_results) \
+            + "\nfire " + str(city.sensors[SensorType.fire].sensor_results) \
+            + "\nmonster " + str(city.sensors[SensorType.monster].sensor_results) \
+            + "\ntornado " + str(city.sensors[SensorType.tornado].sensor_results) \
+            + "\nufo " + str(city.sensors[SensorType.ufo].sensor_results)
+            )
+        print(str(self.previous_disaster) + "----------------")
