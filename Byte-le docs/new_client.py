@@ -9,6 +9,11 @@ class Client(UserClient):
         self.previous_disaster = None
 
         self.lasting_disasters = [DisasterType.fire, DisasterType.blizzard, DisasterType.monster]
+        self.instant_disasters = {
+            DisasterType.tornado: SensorType.tornado,
+            DisasterType.earthquake: SensorType.earthquake,
+            DisasterType.ufo: SensorType.ufo
+        }
 
         self.disaster_to_decree = {
             DisasterType.fire: DecreeType.anti_fire_dogs,
@@ -19,7 +24,7 @@ class Client(UserClient):
             DisasterType.ufo: DecreeType.cheese,
         }
 
-        #For setting decrees
+        # For setting decrees
         self.decree = DecreeType.none
         self.previous_decree = DecreeType.none
         self.decree_lag = 0
@@ -49,13 +54,19 @@ class Client(UserClient):
 
         for i in range(len(lasting_disasters)):
                 actions.add_effort(lasting_disasters[i], lasting_disasters[i].effort_remaining)
+                if avail_effort > lasting_disasters[i].effort_remaining:
+                    avail_effort -= avail_effort - lasting_disasters[i].effort_remaining
+                else:
+                    avail_effort -= avail_effort
+
         try:
             lasting_disasters.sort(key=lambda x: lasting_disasters[0].effort_remaining)
         except IndexError:
             pass
 
         if city.structure < city.max_structure - 20:
-            actions.add_effort(ActionType.repair_structure, (city.max_structure - city.structure) * 2)
+            actions.add_effort(ActionType.repair_structure, (city.max_structure - avail_effort) * 2)
+            avail_effort -= (city.max_structure - avail_effort) * 2
             # add effort to repair city if structure below 50
 
         if city.population < city.structure:
