@@ -114,8 +114,11 @@ class Client(UserClient):
 
         ##
         # Decrees
-        # using elifs to set priority ufo > earthquake > tornado
+        # using elifs to set priority
+        # ufo > earthquake > tornado
         # .85-.89 seems to be the best values
+        # also using decrees only for instant disasters seems to perform better.
+        # I might include a separate sensitivity var for lasting disasters and see how that does
         sensitivity = .85
         if city.sensors[SensorType.ufo].sensor_results >= sensitivity:
             self.decree = self.disaster_to_decree[DisasterType.ufo]
@@ -142,3 +145,6 @@ class Client(UserClient):
         #
         # decree = self.disaster_to_decree[self.sensor_to_disaster[max(sensors.keys(), key=lambda k: sensors[k])]]
         # actions.set_decree(decree)
+
+        '''Building upgrades
+        '''
