@@ -73,5 +73,13 @@ class Client(UserClient):
 
         if self.decree_lag <= 4:
             if city.sensors[SensorType.earthquake].sensor_results >= .88:
+                self.decree_lag = 5
                 self.decree = self.disaster_to_decree[DisasterType.earthquake]
+            if city.sensors[SensorType.tornado].sensor_results >= .88:
+                self.decree_lag = 5
+                self.decree = self.disaster_to_decree[DisasterType.tornado]
+            if city.sensors[SensorType.ufo].sensor_results >= .88:
+                self.decree_lag = 5
+                self.decree = self.disaster_to_decree[DisasterType.ufo]
         actions.set_decree(self.decree)
+        self.decree_lag -= 1
