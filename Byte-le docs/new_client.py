@@ -50,6 +50,15 @@ class Client(UserClient):
     def take_turn(self, turn, actions, city, disasters):
         avail_effort = city.population
 
+        if city.structure < city.max_structure - 20:
+            actions.add_effort(ActionType.repair_structure, (city.max_structure - avail_effort) * 2)
+            avail_effort -= (city.max_structure - avail_effort) * 2
+            # add effort to repair city if structure below 50
+
+        if city.population < city.structure:
+            actions.add_effort(ActionType.regain_population, (city.structure - avail_effort) * 2)
+            avail_effort -= (city.structure - avail_effort) * 2
+
         lasting_disasters = []
         for disaster in disasters:
             if disaster.type in self.lasting_disasters:
@@ -86,19 +95,15 @@ class Client(UserClient):
             )
         print(str(self.previous_disaster) + "----------------")
 
-        if city.sensors[SensorType.earthquake].sensor_results >= .88:
-            self.decree_lag = 5
-            self.decree = self.disaster_to_decree[DisasterType.earthquake]
-        if city.sensors[SensorType.tornado].sensor_results >= .88:
-            self.decree_lag = 5
-            self.decree = self.disaster_to_decree[DisasterType.tornado]
-        if city.sensors[SensorType.ufo].sensor_results >= .88:
-            self.decree_lag = 5
-            self.decree = self.disaster_to_decree[DisasterType.ufo]
-
-        print("decree lag = " + str(self.decree_lag))
-        if self.decree_lag <= 1:
-            actions.set_decree(self.decree)
-            print("decree changed to " + self.decrees[self.decree])
+        if self.decree_lag <= 4:
+            if city.sensors[SensorType.earthquake].sensor_results >= .88:
+                self.decree_lag = 5
+                self.decree = self.disaster_to_decree[DisasterType.earthquake]
+            if city.sensors[SensorType.tornado].sensor_results >= .88:
+                self.decree_lag = 5
+                self.decree = self.disaster_to_decree[DisasterType.tornado]
+            if city.sensors[SensorType.ufo].sensor_results >= .88:
+                self.decree_lag = 5
+                self.decree = self.disaster_to_decree[DisasterType.ufo]
+        actions.set_decree(self.decree)
         self.decree_lag -= 1
-        
