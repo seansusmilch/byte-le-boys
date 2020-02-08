@@ -38,6 +38,11 @@ class Client(UserClient):
             if disaster.type in self.lasting_disasters:
                 lasting_disasters.append(disaster)
 
-        lasting_disasters.sort(key=lasting_disasters[0].remaining_effort)
-        for i in lasting_disasters:
-                actions.add_effort(lasting_disasters[0], lasting_disasters[0].effort_remaining)
+            self.previous_disaster = disaster
+        try:
+            lasting_disasters.sort(key=lambda x: lasting_disasters[0].effort_remaining)
+        except IndexError:
+            pass
+
+        for i in range(len(lasting_disasters)):
+                actions.add_effort(lasting_disasters[i], lasting_disasters[i].effort_remaining)
