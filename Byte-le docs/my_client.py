@@ -26,7 +26,7 @@ class Client(UserClient):
         Allows the team to set a team name.
         :return: Your team name
         """
-        return 'Team Name'
+        return 'Team 2'
 
     def city_name(self):
         """
