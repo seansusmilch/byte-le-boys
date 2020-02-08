@@ -45,7 +45,6 @@ class Client(UserClient):
         # For setting decrees
         self.decree = DecreeType.none
         self.previous_decree = DecreeType.none
-        self.decree_lag = 0
 
     def team_name(self):
         return 'Team 2'
@@ -114,30 +113,23 @@ class Client(UserClient):
         # print(str(self.previous_disaster) + "----------------")
 
         if city.sensors[SensorType.ufo].sensor_results >= .86:
-            self.decree_lag = 4
             self.decree = self.disaster_to_decree[DisasterType.ufo]
         elif city.sensors[SensorType.earthquake].sensor_results >= .86:
-            self.decree_lag = 4
             self.decree = self.disaster_to_decree[DisasterType.earthquake]
         elif city.sensors[SensorType.tornado].sensor_results >= .86:
-            self.decree_lag = 4
             self.decree = self.disaster_to_decree[DisasterType.tornado]
+
         # elif city.sensors[SensorType.monster].sensor_results >= .86:
-        #     self.decree_lag = 4
         #     self.decree = self.disaster_to_decree[DisasterType.monster]
         # elif city.sensors[SensorType.blizzard].sensor_results >= .86:
-        #     self.decree_lag = 4
         #     self.decree = self.disaster_to_decree[DisasterType.blizzard]
         # elif city.sensors[SensorType.fire].sensor_results >= .86:
-        #     self.decree_lag = 4
         #     self.decree = self.disaster_to_decree[DisasterType.fire]
 
-        # if self.decree_lag < 2:
         actions.set_decree(self.decree)
         if self.decree != self.previous_decree:
             print("\n--------------decree changed to " + self.decrees[self.decree])
             self.previous_decree = self.decree
-        self.decree_lag -= 1
 
         # sensors = dict()
         # for sensor_type, sensor in city.sensors.items():
