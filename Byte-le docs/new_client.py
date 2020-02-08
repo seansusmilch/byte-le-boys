@@ -56,6 +56,18 @@ class Client(UserClient):
         if city.population < city.structure:
             actions.add_effort(ActionType.regain_population, (city.structure - city.population) * 2)
 
+
+
+
+
+        senses = []
+        senses_name = []
+        for i in city.sensors:
+            senses.append(i.sensor_results)
+            senses_name.append(i)
+
+        senses_name[senses.index(max(senses))]
+
         print(
             "blizz " + str(city.sensors[SensorType.blizzard].sensor_results) \
             +"\nearth " + str(city.sensors[SensorType.earthquake].sensor_results) \
@@ -65,3 +77,5 @@ class Client(UserClient):
             + "\nufo " + str(city.sensors[SensorType.ufo].sensor_results)
             )
         print(str(self.previous_disaster) + "----------------")
+
+
