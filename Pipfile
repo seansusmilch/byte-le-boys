@@ -1,0 +1,17 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+cocos2d = "*"
+
+[packages]
+tqdm = "*"
+numpy = "*"
+pillow = "*"
+pyglet = "*"
+requests = "*"
+
+[requires]
+python_version = "3.7"
