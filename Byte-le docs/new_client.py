@@ -24,6 +24,15 @@ class Client(UserClient):
             DisasterType.ufo: DecreeType.cheese,
         }
 
+        self.sensor_to_disaster = {
+            SensorType.tornado: DisasterType.tornado,
+            SensorType.fire: DisasterType.fire,
+            SensorType.blizzard: DisasterType.blizzard,
+            SensorType.earthquake: DisasterType.earthquake,
+            SensorType.monster: DisasterType.monster,
+            SensorType.ufo: DisasterType.ufo,
+        }
+
         self.decrees = [
             "fire",
             "tornado",
@@ -50,9 +59,10 @@ class Client(UserClient):
     def take_turn(self, turn, actions, city, disasters):
         avail_effort = city.population
 
-        if city.structure < city.max_structure - 20:
-            actions.add_effort(ActionType.repair_structure, (city.max_structure - avail_effort) * 2)
-            avail_effort -= (city.max_structure - avail_effort) * 2
+        if city.structure < city.max_structure:
+            max_struct = city.max_structure
+            actions.add_effort(ActionType.repair_structure, (max_struct - avail_effort) * 2)
+            avail_effort -= (max_struct - avail_effort) * 2
             # add effort to repair city if structure below 50
 
         if city.population < city.structure:
@@ -71,19 +81,27 @@ class Client(UserClient):
             pass
 
         for i in range(len(lasting_disasters)):
-            actions.add_effort(lasting_disasters[i], lasting_disasters[i].effort_remaining)
-            if avail_effort > lasting_disasters[i].effort_remaining // 3 + 10:
+            if avail_effort > lasting_disasters[i].effort_remaining:
                 avail_effort -= avail_effort - lasting_disasters[i].effort_remaining
             else:
                 avail_effort -= avail_effort
+            actions.add_effort(lasting_disasters[i], lasting_disasters[i].effort_remaining)
 
-        try:
-            lasting_disasters.sort(key=lambda x: lasting_disasters[0].effort_remaining)
-        except IndexError:
-            pass
+        avail_effort -= city.effort_remaining
+        actions.add_effort(ActionType.upgrade_city, city.effort_remaining)
+        if city.buildings[BuildingType.printer].level != BuildingLevel.level_one:
+            actions.add_effort(city.buildings[BuildingType.printer], max(city.gold, avail_effort))
 
-        actions.add_effort(city.buildings[BuildingType.billboard], avail_effort)
-        avail_effort -= avail_effort
+        if city.sensors[SensorType.ufo] != SensorLevel.level_three:
+            actions.add_effort(city.sensors[SensorType.ufo], city.sensors[SensorType.ufo].effort_remaining)
+        if city.sensors[SensorType.earthquake] != SensorLevel.level_three:
+            actions.add_effort(city.sensors[SensorType.earthquake], city.sensors[SensorType.earthquake].effort_remaining)
+        if city.sensors[SensorType.tornado] != SensorLevel.level_three:
+            actions.add_effort(city.sensors[SensorType.tornado], city.sensors[SensorType.tornado].effort_remaining)
+
+
+        #print("Effort Remaining: " + str(avail_effort))
+
 
         # print(
         #     "blizz " + str(city.sensors[SensorType.blizzard].sensor_results) \
@@ -120,3 +138,10 @@ class Client(UserClient):
             print("\n--------------decree changed to " + self.decrees[self.decree])
             self.previous_decree = self.decree
         self.decree_lag -= 1
+
+        # sensors = dict()
+        # for sensor_type, sensor in city.sensors.items():
+        #     sensors[sensor_type] = sensor.sensor_results
+        #
+        # decree = self.disaster_to_decree[self.sensor_to_disaster[max(sensors.keys(), key=lambda k: sensors[k])]]
+        # actions.set_decree(decree)
