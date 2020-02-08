@@ -115,24 +115,25 @@ class Client(UserClient):
         ##
         # Decrees
         # using elifs to set priority ufo > earthquake > tornado
-        #
-        if city.sensors[SensorType.ufo].sensor_results >= .86:
+        # .85-.89 seems to be the best values
+        sensitivity = .85
+        if city.sensors[SensorType.ufo].sensor_results >= sensitivity:
             self.decree = self.disaster_to_decree[DisasterType.ufo]
-        elif city.sensors[SensorType.earthquake].sensor_results >= .86:
+        elif city.sensors[SensorType.earthquake].sensor_results >= sensitivity:
             self.decree = self.disaster_to_decree[DisasterType.earthquake]
-        elif city.sensors[SensorType.tornado].sensor_results >= .86:
+        elif city.sensors[SensorType.tornado].sensor_results >= sensitivity:
             self.decree = self.disaster_to_decree[DisasterType.tornado]
 
-        # elif city.sensors[SensorType.monster].sensor_results >= .86:
+        # elif city.sensors[SensorType.monster].sensor_results >= sensitivity:
         #     self.decree = self.disaster_to_decree[DisasterType.monster]
-        # elif city.sensors[SensorType.blizzard].sensor_results >= .86:
+        # elif city.sensors[SensorType.blizzard].sensor_results >= sensitivity:
         #     self.decree = self.disaster_to_decree[DisasterType.blizzard]
-        # elif city.sensors[SensorType.fire].sensor_results >= .86:
+        # elif city.sensors[SensorType.fire].sensor_results >= sensitivity:
         #     self.decree = self.disaster_to_decree[DisasterType.fire]
 
         actions.set_decree(self.decree)
         if self.decree != self.previous_decree:
-            print("\n--------------decree changed to " + self.decrees[self.decree])
+            # print("\n--------------decree changed to " + self.decrees[self.decree])
             self.previous_decree = self.decree
 
         # sensors = dict()
