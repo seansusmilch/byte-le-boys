@@ -112,6 +112,10 @@ class Client(UserClient):
         #     )
         # print(str(self.previous_disaster) + "----------------")
 
+        ##
+        # Decrees
+        # using elifs to set priority ufo > earthquake > tornado
+        #
         if city.sensors[SensorType.ufo].sensor_results >= .86:
             self.decree = self.disaster_to_decree[DisasterType.ufo]
         elif city.sensors[SensorType.earthquake].sensor_results >= .86:
