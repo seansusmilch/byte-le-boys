@@ -18,7 +18,12 @@ class Client(UserClient):
             DisasterType.monster: DecreeType.fishing_hook,
             DisasterType.ufo: DecreeType.cheese,
         }
-        
+
+        #For setting decrees
+        self.decree = DecreeType.none
+        self.previous_decree = DecreeType.none
+        self.decree_lag = 0
+
     def team_name(self):
         return 'Team 2'
 
@@ -70,7 +75,7 @@ class Client(UserClient):
 
         print(
             "blizz " + str(city.sensors[SensorType.blizzard].sensor_results) \
-            +"\nearth " + str(city.sensors[SensorType.earthquake].sensor_results) \
+            + "\nearth " + str(city.sensors[SensorType.earthquake].sensor_results) \
             + "\nfire " + str(city.sensors[SensorType.fire].sensor_results) \
             + "\nmonster " + str(city.sensors[SensorType.monster].sensor_results) \
             + "\ntornado " + str(city.sensors[SensorType.tornado].sensor_results) \
@@ -78,4 +83,8 @@ class Client(UserClient):
             )
         print(str(self.previous_disaster) + "----------------")
 
+        if self.decree_lag <= 4:
+            if city.sensors[SensorType.earthquake].sensor_results >= .88:
+                self.decree = self.disaster_to_decree[DisasterType.earthquake]
+        actions.set_decree(self.decree)
 
