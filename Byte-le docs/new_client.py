@@ -101,3 +101,4 @@ class Client(UserClient):
             actions.set_decree(self.decree)
             print("decree changed to " + self.decrees[self.decree])
         self.decree_lag -= 1
+        
