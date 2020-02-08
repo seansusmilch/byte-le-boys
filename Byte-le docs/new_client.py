@@ -31,18 +31,19 @@ class Client(UserClient):
     def take_turn(self, turn, actions, city, disasters):
         avail_effort = city.population
         
-        sens_type = 
-        sens_level =
-        
+        # sens_type = 
+        # sens_level =
+        lasting_disasters = []
         for disaster in disasters:
-            
+            if(disaster.type in self.lasting_disasters):
+                lasting_disasters.append(disaster)
 
-        print(
-            "effort = " + avail_effort +
-            "\ngold = " + gold +
-            "\ndisaster type = " + disast_type +
-            "\ndisaster = " + disast +
-            "\nsens_type = " + sens_type + 
-            "\nsens_level = " + sens_level +
-            "\n"
-            )
+        lasting_disasters.sort(key=disasters.remaining_effort)
+
+        out = "effort = " + avail_effort \
+            + "\ngold = " + gold \
+            + "\nsens_type = " + "sens_type" \
+            + "\nsens_level = " + "sens_level" \
+            + "\ndisasters = " + ({i.type} for i in disasters)
+
+        print(out)
