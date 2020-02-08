@@ -25,12 +25,12 @@ class Client(UserClient):
         }
 
         self.decrees = [
-            "anti_fire_dogs",
-            "paperweights",
-            "snow_shovels",
-            "rubber_boots",
-            "fishing_hook",
-            "cheese"
+            "fire",
+            "tornado",
+            "blizzard",
+            "earthquake",
+            "monster",
+            "ufo"
         ]
 
         # For setting decrees
@@ -71,11 +71,11 @@ class Client(UserClient):
             pass
 
         for i in range(len(lasting_disasters)):
-                actions.add_effort(lasting_disasters[i], lasting_disasters[i].effort_remaining)
-                if avail_effort > lasting_disasters[i].effort_remaining // 3 + 10:
-                    avail_effort -= avail_effort - lasting_disasters[i].effort_remaining
-                else:
-                    avail_effort -= avail_effort
+            actions.add_effort(lasting_disasters[i], lasting_disasters[i].effort_remaining)
+            if avail_effort > lasting_disasters[i].effort_remaining // 3 + 10:
+                avail_effort -= avail_effort - lasting_disasters[i].effort_remaining
+            else:
+                avail_effort -= avail_effort
 
         try:
             lasting_disasters.sort(key=lambda x: lasting_disasters[0].effort_remaining)
@@ -85,25 +85,38 @@ class Client(UserClient):
         actions.add_effort(city.buildings[BuildingType.billboard], avail_effort)
         avail_effort -= avail_effort
 
-        print(
-            "blizz " + str(city.sensors[SensorType.blizzard].sensor_results) \
-            + "\nearth " + str(city.sensors[SensorType.earthquake].sensor_results) \
-            + "\nfire " + str(city.sensors[SensorType.fire].sensor_results) \
-            + "\nmonster " + str(city.sensors[SensorType.monster].sensor_results) \
-            + "\ntornado " + str(city.sensors[SensorType.tornado].sensor_results) \
-            + "\nufo " + str(city.sensors[SensorType.ufo].sensor_results)
-            )
-        print(str(self.previous_disaster) + "----------------")
+        # print(
+        #     "blizz " + str(city.sensors[SensorType.blizzard].sensor_results) \
+        #     + "\nearth " + str(city.sensors[SensorType.earthquake].sensor_results) \
+        #     + "\nfire " + str(city.sensors[SensorType.fire].sensor_results) \
+        #     + "\nmonster " + str(city.sensors[SensorType.monster].sensor_results) \
+        #     + "\ntornado " + str(city.sensors[SensorType.tornado].sensor_results) \
+        #     + "\nufo " + str(city.sensors[SensorType.ufo].sensor_results)
+        #     )
+        # print(str(self.previous_disaster) + "----------------")
 
-        if self.decree_lag <= 4:
-            if city.sensors[SensorType.earthquake].sensor_results >= .88:
-                self.decree_lag = 5
-                self.decree = self.disaster_to_decree[DisasterType.earthquake]
-            if city.sensors[SensorType.tornado].sensor_results >= .88:
-                self.decree_lag = 5
-                self.decree = self.disaster_to_decree[DisasterType.tornado]
-            if city.sensors[SensorType.ufo].sensor_results >= .88:
-                self.decree_lag = 5
-                self.decree = self.disaster_to_decree[DisasterType.ufo]
+        if city.sensors[SensorType.ufo].sensor_results >= .86:
+            self.decree_lag = 4
+            self.decree = self.disaster_to_decree[DisasterType.ufo]
+        elif city.sensors[SensorType.earthquake].sensor_results >= .86:
+            self.decree_lag = 4
+            self.decree = self.disaster_to_decree[DisasterType.earthquake]
+        elif city.sensors[SensorType.tornado].sensor_results >= .86:
+            self.decree_lag = 4
+            self.decree = self.disaster_to_decree[DisasterType.tornado]
+        # elif city.sensors[SensorType.monster].sensor_results >= .86:
+        #     self.decree_lag = 4
+        #     self.decree = self.disaster_to_decree[DisasterType.monster]
+        # elif city.sensors[SensorType.blizzard].sensor_results >= .86:
+        #     self.decree_lag = 4
+        #     self.decree = self.disaster_to_decree[DisasterType.blizzard]
+        # elif city.sensors[SensorType.fire].sensor_results >= .86:
+        #     self.decree_lag = 4
+        #     self.decree = self.disaster_to_decree[DisasterType.fire]
+
+        # if self.decree_lag < 2:
         actions.set_decree(self.decree)
+        if self.decree != self.previous_decree:
+            print("\n--------------decree changed to " + self.decrees[self.decree])
+            self.previous_decree = self.decree
         self.decree_lag -= 1
