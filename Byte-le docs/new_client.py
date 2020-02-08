@@ -71,33 +71,34 @@ class Client(UserClient):
 
         if city.population < city.structure:
             actions.add_effort(ActionType.regain_population, (city.structure - city.population) * 2)
-            avail_effort -= (city.structure - avail_effort) * 2
 
-        if city.sensors[SensorType.tornado].level != SensorLevel.level_three:
-            actions.add_effort(city.sensors[SensorType.tornado], avail_effort // 3)
-            avail_effort -= avail_effort // 3
+        senses = []
+        senses_name = []
+        for i in city.sensors:
+            senses.append(i.sensor_results)
+            senses_name.append(i)
 
+        senses_name[senses.index(max(senses))]
 
-        # print(
-        #     "blizz " + str(city.sensors[SensorType.blizzard].sensor_results) \
-        #     + "\nearth " + str(city.sensors[SensorType.earthquake].sensor_results) \
-        #     + "\nfire " + str(city.sensors[SensorType.fire].sensor_results) \
-        #     + "\nmonster " + str(city.sensors[SensorType.monster].sensor_results) \
-        #     + "\ntornado " + str(city.sensors[SensorType.tornado].sensor_results) \
-        #     + "\nufo " + str(city.sensors[SensorType.ufo].sensor_results)
-        #     )
-        # print(str(self.previous_disaster) + "----------------")
-
+        print(
+            "blizz " + str(city.sensors[SensorType.blizzard].sensor_results) \
+            + "\nearth " + str(city.sensors[SensorType.earthquake].sensor_results) \
+            + "\nfire " + str(city.sensors[SensorType.fire].sensor_results) \
+            + "\nmonster " + str(city.sensors[SensorType.monster].sensor_results) \
+            + "\ntornado " + str(city.sensors[SensorType.tornado].sensor_results) \
+            + "\nufo " + str(city.sensors[SensorType.ufo].sensor_results)
+            )
+        print(str(self.previous_disaster) + "----------------")
 
         if self.decree_lag <= 4:
             if city.sensors[SensorType.earthquake].sensor_results >= .88:
+                self.decree_lag = 5
                 self.decree = self.disaster_to_decree[DisasterType.earthquake]
+            if city.sensors[SensorType.tornado].sensor_results >= .88:
+                self.decree_lag = 5
+                self.decree = self.disaster_to_decree[DisasterType.tornado]
+            if city.sensors[SensorType.ufo].sensor_results >= .88:
+                self.decree_lag = 5
+                self.decree = self.disaster_to_decree[DisasterType.ufo]
         actions.set_decree(self.decree)
-
-        decree = DecreeType.none
-        if self.previous_disaster is not None:
-            decree = self.disaster_to_decree[self.previous_disaster.type]
-        actions.set_decree(decree)
-        # default decree
-
-
+        self.decree_lag -= 1
