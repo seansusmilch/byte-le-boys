@@ -61,14 +61,6 @@ class Client(UserClient):
         if city.population < city.structure:
             actions.add_effort(ActionType.regain_population, (city.structure - city.population) * 2)
 
-        senses = []
-        senses_name = []
-        for i in city.sensors:
-            senses.append(i.sensor_results)
-            senses_name.append(i)
-
-        senses_name[senses.index(max(senses))]
-
         print(
             "blizz " + str(city.sensors[SensorType.blizzard].sensor_results) \
             + "\nearth " + str(city.sensors[SensorType.earthquake].sensor_results) \
@@ -79,15 +71,16 @@ class Client(UserClient):
             )
         print(str(self.previous_disaster) + "----------------")
 
-        if self.decree_lag <= 4:
-            if city.sensors[SensorType.earthquake].sensor_results >= .88:
-                self.decree_lag = 5
-                self.decree = self.disaster_to_decree[DisasterType.earthquake]
-            if city.sensors[SensorType.tornado].sensor_results >= .88:
-                self.decree_lag = 5
-                self.decree = self.disaster_to_decree[DisasterType.tornado]
-            if city.sensors[SensorType.ufo].sensor_results >= .88:
-                self.decree_lag = 5
-                self.decree = self.disaster_to_decree[DisasterType.ufo]
-        actions.set_decree(self.decree)
+        if city.sensors[SensorType.earthquake].sensor_results >= .88:
+            self.decree_lag = 5
+            self.decree = self.disaster_to_decree[DisasterType.earthquake]
+        if city.sensors[SensorType.tornado].sensor_results >= .88:
+            self.decree_lag = 5
+            self.decree = self.disaster_to_decree[DisasterType.tornado]
+        if city.sensors[SensorType.ufo].sensor_results >= .88:
+            self.decree_lag = 5
+            self.decree = self.disaster_to_decree[DisasterType.ufo]
+
+        if self.decree_lag <= 1:
+            actions.set_decree(self.decree)
         self.decree_lag -= 1
