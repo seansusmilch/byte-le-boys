@@ -85,9 +85,12 @@ class Client(UserClient):
             else:
                 avail_effort -= avail_effort
             actions.add_effort(lasting_disasters[i], lasting_disasters[i].effort_remaining)
+            avail_effort -= lasting_disasters[i].effort_remaining
 
+        # makes avail_effort negative
         avail_effort -= city.effort_remaining
         actions.add_effort(ActionType.upgrade_city, city.effort_remaining)
+
         if city.buildings[BuildingType.printer].level != BuildingLevel.level_one:
             actions.add_effort(city.buildings[BuildingType.printer], max(city.gold, avail_effort))
 
@@ -98,9 +101,7 @@ class Client(UserClient):
         if city.sensors[SensorType.tornado] != SensorLevel.level_three:
             actions.add_effort(city.sensors[SensorType.tornado], city.sensors[SensorType.tornado].effort_remaining)
 
-
-        #print("Effort Remaining: " + str(avail_effort))
-
+        # print("Effort Remaining: " + str(avail_effort))
 
         # print(
         #     "blizz " + str(city.sensors[SensorType.blizzard].sensor_results) \
@@ -117,34 +118,24 @@ class Client(UserClient):
         # using elifs to set priority
         # ufo > earthquake > tornado
         # .85-.89 seems to be the best values
-        # also using decrees only for instant disasters seems to perform better.
-        # I might include a separate sensitivity var for lasting disasters and see how that does
-        sensitivity = .85
-        if city.sensors[SensorType.ufo].sensor_results >= sensitivity:
+        sens_inst = .85
+        sens_last = .9
+        if city.sensors[SensorType.ufo].sensor_results >= sens_inst:
             self.decree = self.disaster_to_decree[DisasterType.ufo]
-        elif city.sensors[SensorType.earthquake].sensor_results >= sensitivity:
+        elif city.sensors[SensorType.earthquake].sensor_results >= sens_inst:
             self.decree = self.disaster_to_decree[DisasterType.earthquake]
-        elif city.sensors[SensorType.tornado].sensor_results >= sensitivity:
+        elif city.sensors[SensorType.tornado].sensor_results >= sens_inst:
             self.decree = self.disaster_to_decree[DisasterType.tornado]
 
-        # elif city.sensors[SensorType.monster].sensor_results >= sensitivity:
-        #     self.decree = self.disaster_to_decree[DisasterType.monster]
-        # elif city.sensors[SensorType.blizzard].sensor_results >= sensitivity:
-        #     self.decree = self.disaster_to_decree[DisasterType.blizzard]
-        # elif city.sensors[SensorType.fire].sensor_results >= sensitivity:
-        #     self.decree = self.disaster_to_decree[DisasterType.fire]
+        # lasting disasters get lower priority
+        elif city.sensors[SensorType.monster].sensor_results >= sens_last:
+            self.decree = self.disaster_to_decree[DisasterType.monster]
+        elif city.sensors[SensorType.blizzard].sensor_results >= sens_last:
+            self.decree = self.disaster_to_decree[DisasterType.blizzard]
+        elif city.sensors[SensorType.fire].sensor_results >= sens_last:
+            self.decree = self.disaster_to_decree[DisasterType.fire]
 
         actions.set_decree(self.decree)
         if self.decree != self.previous_decree:
             # print("\n--------------decree changed to " + self.decrees[self.decree])
             self.previous_decree = self.decree
-
-        # sensors = dict()
-        # for sensor_type, sensor in city.sensors.items():
-        #     sensors[sensor_type] = sensor.sensor_results
-        #
-        # decree = self.disaster_to_decree[self.sensor_to_disaster[max(sensors.keys(), key=lambda k: sensors[k])]]
-        # actions.set_decree(decree)
-
-        '''Building upgrades
-        '''
