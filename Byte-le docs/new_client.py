@@ -46,3 +46,10 @@ class Client(UserClient):
 
         for i in range(len(lasting_disasters)):
                 actions.add_effort(lasting_disasters[i], lasting_disasters[i].effort_remaining)
+
+        if city.structure < city.max_structure - 20:
+            actions.add_effort(ActionType.repair_structure, (city.max_structure - city.structure) * 2)
+            # add effort to repair city if structure below 50
+
+        if city.population < city.structure:
+            actions.add_effort(ActionType.regain_population, (city.structure - city.population) * 2)
