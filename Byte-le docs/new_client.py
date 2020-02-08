@@ -35,15 +35,9 @@ class Client(UserClient):
         # sens_level =
         lasting_disasters = []
         for disaster in disasters:
-            if(disaster.type in self.lasting_disasters):
+            if disaster.type in self.lasting_disasters:
                 lasting_disasters.append(disaster)
 
-        lasting_disasters.sort(key=disasters.remaining_effort)
-
-        out = "effort = " + avail_effort \
-            + "\ngold = " + gold \
-            + "\nsens_type = " + "sens_type" \
-            + "\nsens_level = " + "sens_level" \
-            + "\ndisasters = " + ({i.type} for i in disasters)
-
-        print(out)
+        lasting_disasters.sort(key=lasting_disasters[0].remaining_effort)
+        for i in lasting_disasters:
+                actions.add_effort(lasting_disasters[0], lasting_disasters[0].effort_remaining)
