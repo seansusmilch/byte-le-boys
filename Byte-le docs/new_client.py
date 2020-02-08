@@ -24,6 +24,15 @@ class Client(UserClient):
             DisasterType.ufo: DecreeType.cheese,
         }
 
+        self.decrees = [
+            "anti_fire_dogs",
+            "paperweights",
+            "snow_shovels",
+            "rubber_boots",
+            "fishing_hook",
+            "cheese"
+        ]
+
         # For setting decrees
         self.decree = DecreeType.none
         self.previous_decree = DecreeType.none
@@ -92,6 +101,8 @@ class Client(UserClient):
             self.decree_lag = 5
             self.decree = self.disaster_to_decree[DisasterType.ufo]
 
+        print("decree lag = " + str(self.decree_lag))
         if self.decree_lag <= 1:
             actions.set_decree(self.decree)
+            print("decree changed to " + self.decrees[self.decree])
         self.decree_lag -= 1
